@@ -60,7 +60,7 @@ function check_mem {
     echo -e "Mem_Utilization:   $mem_usage%"
 }
 
-#检测磁盘分区使用率
+#检查磁盘分区使用率
 function check_disk {
     df -TH | grep -v 'tmpfs' | grep -v 'devtmpfs'
 }
@@ -76,6 +76,7 @@ function check_io {
     fi
 }
 
+#检查网络
 function check_network {
     SAR=`which sar`
     SAR=$?
@@ -87,6 +88,7 @@ function check_network {
     fi
 }
 
+#检查中间件
 function check_middleware {
     echo -e "存在的端口："
     ss -tunpl | grep 2181 &>/dev/null && echo "Zookeeper:2181"
@@ -107,6 +109,7 @@ function check_middleware {
     
 }
 
+#检查应用
 function check_app {
     echo -e "检查应用错误日志:\n进入应用所在目录，查看各应用日志。命令格式：cat app.log |grep -E ‘error|exception’ "
     echo -e "\n检查近7日的业务调用量统计:\n使用web浏览器打开产品的风险大盘页面进行最近7日的业务调用量的记录 "
