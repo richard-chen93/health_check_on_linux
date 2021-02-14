@@ -29,7 +29,7 @@ function check_cpu {
 echo "Cpu Name       :`cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq` " #cpu type
 echo "Cpu Count      : `cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l` " #physical cpu number
 echo "Cores Per Cpu  : `cat /proc/cpuinfo| grep "cpu cores"| uniq |awk '{print $4}'`"  #cores of each cpu
-
+echo -e " \n "
 #使用列表for循环采集5次cpu使用情况。
 for variable  in 1 2 3 4 5
 do
@@ -56,7 +56,8 @@ function check_mem {
     nowdate=$(date +"%Y-%m-%d %H:%M:%S")
     mem_usage=`echo -e "${RealUsedMem}\t${TotalMem}"|awk '{printf "%2.2f\n",$1/$2*100}'`
     ALLMEM=`free -m | head -2 | tail -1| awk '{print $2}'`
-    echo -e "MemSize:$ALLMEM M \t Mem_Utilization:$mem_usage%"
+    echo -e "MemSize:           $ALLMEM M"
+    echo -e "Mem_Utilization:   $mem_usage%"
 }
 
 #检测磁盘分区使用率
@@ -86,15 +87,31 @@ function check_network {
     fi
 }
 
-function check_ports {
-    echo "existing ports for Zookeeper:2181,Kafka:9092,ElasticSearch:9200,Mysql:3306,Aerospike:"
+function check_middleware {
+    echo -e "存在的端口："
     ss -tunpl | grep 2181 &>/dev/null && echo "Zookeeper:2181"
     ss -tunpl | grep 9092 &>/dev/null && echo "Kafka:9092"
     ss -tunpl | grep 9200 &>/dev/null && echo "ElasticSearch:9200"
-    ss -tunpl | grep 3306 &>/dev/null && echo "Mysql:3306"
-    ss -tunpl | grep 0000 &>/dev/null && echo "Aerospike:0000"
+    ss -tunpl | grep 3306 &>/dev/null && echo "Mysql:3306 "
+    
+    echo -e "\nES集群和索引状态(若存在)："
+    curl http://localhost:9200/_cluster/health?pretty | grep green &>/dev/null && echo "ES cluster status: green" || echo "error: ES cluster has problems, check it out ! "
+    curl http://localhost:9200/_cat/indices?v | grep -v green &>/dev/null && echo "ES index status: green" || echo "error: ES index has problems, check it out ! "
+
+    echo -e " \n其他组件查看："
+    echo -e "Kafka需要指定安装路径，查看消费堆积情况需要指定消费者组名"
+    echo -e "查看正在运行的消费者组：./kafka-consumer-groups.sh --bootstrap-server {ip}:9092 --list --new-consumer "
+    echo -e "消费堆积情况查看：./kafka-consumer-groups.sh --bootstrap-server {ip}:9092 --describe --group {group name} "
+    echo -e "Aerospike检查需通过web客户端查看，重点查看集群颜色状态、节点和namespace信息，关注内存和磁盘使用率。"
+    echo -e "Mysql检查需要登录mysql，执行命令show processlist，查看TIME列，若有几千毫秒数值，需要进一步排查。 "
+    
 }
 
+function check_app {
+    echo -e "检查应用错误日志:\n进入应用所在目录，查看各应用日志。命令格式：cat app.log |grep -E ‘error|exception’ "
+    echo -e "\n检查近7日的业务调用量统计:\n使用web浏览器打开产品的风险大盘页面进行最近7日的业务调用量的记录 "
+    echo -e "\n检查系统License过期时间:\n使用web浏览器登录超级管理员，找到系统设置菜单，打开后在页面上查看license过期时间，并将过期时间记录到excel中 "
+}
 
 #汇聚所有检测内容
 function check_OS {
@@ -110,7 +127,9 @@ function check_OS {
     echo -e "\n\n--------------------------network------------------------------"
     check_network
     echo -e "\n\n--------------------------Middleware---------------------------"
-    check_ports
+    check_middleware
+    echo -e "\n\n--------------------------app------------------------------"
+    check_app
 }
 
 #输出检测报告到当前目录，文件名以.txt结尾

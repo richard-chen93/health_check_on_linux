@@ -1,0 +1,101 @@
+
+#####################################################################
+    Health Check Report (CPU、Memory、Disk、IO、Network、Middleware)
+#####################################################################
+
+Hostname         : s6
+Linux Version    : CentOS Linux release 7.9.2009 (Core)
+Uptime           :  2:04
+Last Reboot Time : 22:12 
+Report Time      : 2021年 02月 14日 星期日 20:06:25 CST
+
+
+
+--------------------------cpu----------------------------------
+Cpu Name       : Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz 
+Cpu Count      : 2 
+Cores Per Cpu  : 1
+ 
+ 
+20:06:25 Usage: (0.0+3.4)% Io_wait:  0.0 wa load average: 0.25, 0.20, 0.14
+20:06:26 Usage: (0.0+0.0)% Io_wait:  0.0 wa load average: 0.25, 0.20, 0.14
+20:06:26 Usage: (3.1+0.0)% Io_wait:  0.0 wa load average: 0.25, 0.20, 0.14
+20:06:27 Usage: (0.0+0.0)% Io_wait:  0.0 wa load average: 0.23, 0.20, 0.14
+20:06:28 Usage: (3.2+0.0)% Io_wait:  0.0 wa load average: 0.23, 0.20, 0.14
+
+
+--------------------------memory-------------------------------
+MemSize:           2755 M
+Mem_Utilization:   56.33%
+
+
+--------------------------disk---------------------------------
+文件系统       类型              容量  已用  可用 已用% 挂载点
+/dev/sda2      xfs                63G  3.6G   59G    6% /
+vmhgfs-fuse    fuse.vmhgfs-fuse  500G  287G  214G   58% /mnt/hgfs
+
+
+--------------------------io-----------------------------------
+Device:  r_await  w_await  svctm  %util
+sdb      0.64     0.30     0.30   0.06
+sda      0.44     0.45     0.24   0.15
+dm-0     0.66     0.30     0.31   0.06
+Device:  r_await  w_await  svctm  %util
+sdb      0.00     0.00     0.00   0.00
+sda      0.00     0.00     0.00   0.00
+dm-0     0.00     0.00     0.00   0.00
+Device:  r_await  w_await  svctm  %util
+sdb      0.00     0.50     0.50   0.10
+sda      0.00     0.00     0.00   0.00
+dm-0     0.00     0.50     0.50   0.10
+Device:  r_await  w_await  svctm  %util
+sdb      0.00     0.50     0.50   0.10
+sda      1.00     0.33     0.38   0.30
+dm-0     0.00     0.50     0.50   0.10
+Device:  r_await  w_await  svctm  %util
+sdb      0.00     0.50     0.50   0.10
+sda      0.00     0.00     0.00   0.00
+dm-0     0.00     0.50     0.50   0.10
+
+
+--------------------------network------------------------------
+20时06分32秒  IFACE  rxkB/s  txkB/s
+20时06分33秒  lo     0.00    0.00
+20时06分33秒  ens33  6.35    2.34
+20时06分33秒  IFACE  rxkB/s  txkB/s
+20时06分34秒  lo     0.00    0.00
+20时06分34秒  ens33  0.73    0.72
+20时06分34秒  IFACE  rxkB/s  txkB/s
+20时06分35秒  lo     0.00    0.00
+20时06分35秒  ens33  6.35    2.27
+平均时间:     IFACE  rxkB/s  txkB/s
+平均时间:     lo     0.00    0.00
+平均时间:     ens33  4.47    1.78
+
+
+--------------------------Middleware---------------------------
+存在的端口：
+ElasticSearch:9200
+Mysql:3306 
+
+ES集群和索引状态(若存在)：
+ES cluster status: green
+ES index status: green
+ 
+其他组件查看：
+Kafka需要指定安装路径，查看消费堆积情况需要指定消费者组名
+查看正在运行的消费者组：./kafka-consumer-groups.sh --bootstrap-server {ip}:9092 --list --new-consumer 
+消费堆积情况查看：./kafka-consumer-groups.sh --bootstrap-server {ip}:9092 --describe --group {group name} 
+Aerospike检查需通过web客户端查看，重点查看集群颜色状态、节点和namespace信息，关注内存和磁盘使用率。
+Mysql检查需要登录mysql，执行命令show processlist，查看TIME列，若有几千毫秒数值，需要进一步排查。 
+
+
+--------------------------app------------------------------
+检查应用错误日志:
+进入应用所在目录，查看各应用日志。命令格式：cat app.log |grep -E ‘error|exception’ 
+
+检查近7日的业务调用量统计:
+使用web浏览器打开产品的风险大盘页面进行最近7日的业务调用量的记录 
+
+检查系统License过期时间:
+使用web浏览器登录超级管理员，找到系统设置菜单，打开后在页面上查看license过期时间，并将过期时间记录到excel中 
