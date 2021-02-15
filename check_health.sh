@@ -1,7 +1,6 @@
 #!/bin/bash
 
-##---------- Author : Zhengang.chen ----------------------------------------------------##
-##---------- Github page : https://github.com/richard-chen93/health_check_on_linux ------------##
+##---------- Author : Zhengang.chen ---------------------------------------------------------##
 ##---------- Purpose : To quickly check and report health status in a linux system.----------##
 ##---------- Tested on : Centos7. May work on other linux distributions as well.-------------## 
 ##---------- Updated version : v0.1 (Updated on 14th Feb 2021) ------------------------------##
